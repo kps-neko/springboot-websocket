@@ -1,0 +1,17 @@
+<div layout:decorator="layout"
+     xmlns:layout="http://www.w3.org/1999/xhtml">
+    <th:block layout:fragment="layout-content">
+        <main>
+            <section data-chatroom-id="1" id="room1">
+                <textarea data-viewer="" name="viewer" cols="30" rows="10" readonly=""></textarea>
+                <input data-input="" type="text" name="message"/>
+                <button data-button="">送信</button>
+            </section>
+            <section data-chatroom-id="2" id="room2">
+                <textarea data-viewer="" name="viewer" cols="30" rows="10" readonly=""></textarea>
+                <input data-input="" type="text" name="message"/>
+                <button data-button="">送信</button>
+            </section>
+        </main>
+    </th:block>
+</div>

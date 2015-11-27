@@ -1,0 +1,15 @@
+/build/
+/bin/
+/out/
+/.idea/
+/.gradle/
+/.settings/
+/.project
+/.asscache
+/.classpath
+/.springBeans
+/*.iml
+/*.ipr
+/*.iws
+/*.ids
+/app.log*

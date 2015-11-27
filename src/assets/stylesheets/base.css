@@ -1,0 +1,20 @@
+@CHARSET "UTF-8";
+body {
+ font: normal 10pt normal "メイリオ",Meiryo;
+}
+input {
+ font: normal 10pt normal "メイリオ",Meiryo;
+}
+table {
+ border: 2px solid gray;
+}
+th {
+ background-color: silver;
+ font-weight: normal;
+}
+td {
+ background-color: white;
+}
+.fieldError {
+  background-color: #ff8080;
+}

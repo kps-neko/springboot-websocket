@@ -5,6 +5,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,18 +20,21 @@ public class HomeController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-//    @RequestMapping("/")
-//    public String index() {
-//        return "home";
-//    }
+    @RequestMapping("/home")
+    public String index() {
+        return "home";
+    }
 //
-//    @MessageMapping("/hello")
-//    @SendTo("/topic/greetings")
-//    public Greeting greeting(HelloMessage message) throws Exception {
-//        System.out.println("きた。");
-//        Thread.sleep(3000);
+    @MessageMapping("/hello")
+//    @SendToUser("/queue/greetings")
+//    @SendTo("/queue/greetings") // こちらは全配信。
+    public void greeting(HelloMessage message) throws Exception {
+        System.out.println("aaaaa");
+        Thread.sleep(5000);
 //        return new Greeting("Hello, " + message.getName());
-//    }
+        Greeting g = new Greeting("Hello, " + message.getName());
+        simpMessagingTemplate.convertAndSendToUser("/user", "/queue/greetings", g);
+    }
 
     @RequestMapping("/")
     public String chatRoomhtml() {
@@ -43,4 +47,6 @@ public class HomeController {
         System.out.println(message.getName());
         simpMessagingTemplate.convertAndSend("/topic/chat/" + id, message);
     }
+
+
 }

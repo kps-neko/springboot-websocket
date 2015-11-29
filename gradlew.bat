@@ -1,4 +1,3 @@
-set JAVA_OPTS=-DproxyHost=proxy02.fiosys.co.jp -DproxyPort=8080
 @if "%DEBUG%" == "" @echo off
 @rem ##########################################################################
 @rem

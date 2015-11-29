@@ -2,11 +2,8 @@ package app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 
-
-@ComponentScan({"app", "asset.pipeline.springboot"})
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"app", "asset.pipeline.springboot"})
 public class Application {
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Application.class, args);

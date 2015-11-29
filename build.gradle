@@ -14,6 +14,7 @@ buildscript {
         classpath 'org.flywaydb:flyway-gradle-plugin:3.2.1'
         classpath "${dbSetting.driverArtifactId}:${dbSetting.driverVersion}"
         classpath 'com.bertramlabs.plugins:asset-pipeline-gradle:2.6.7'
+        classpath "org.springframework:springloaded:1.2.4.RELEASE"
     }
 }
 apply plugin: 'java'
@@ -33,11 +34,18 @@ dependencyManagement {
 */
 
 jar {
-    baseName = 'springboot-gradle-sample'
+    baseName = 'springboot-websocket'
     version = '0.1.0'
 
     // 依存jar内のクラスも含めて一つのjarに入れるための設定
     //from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+idea {
+    module {
+        inheritOutputDirs = false
+        outputDir = file("$buildDir/classes/main/")
+    }
 }
 
 flyway {

@@ -3,10 +3,31 @@
  * Created by s-wada on 2015/11/27.
  */
 $(function () {
+
+    /**
+     * ヘッダのメタタグからcsrfトークンを取得
+     */
+    var csrfHeader = (function () {
+        var csrfHeader = $('meta[name=_csrf_header]').attr('content');
+        var csrfToken = $('meta[name=_csrf]').attr('content');
+        var header = {};
+        header[csrfHeader] = csrfToken;
+        return header;
+    }());
+
+    /**
+     * WebSocketエンドポイント
+     * @type {string}
+     */
+    var endpoint = "/wsendpoint";
+
+    // TODO Stomp接続でデータをやり取りするパーツをスーパクラスとして実装し、chatroomで継承するように。
     var _StompClient = function () {
     };
     _StompClient.prototype = {
         receive: function (message) {
+        },
+        send: function (message) {
         },
         connectionId: null
     };
@@ -22,17 +43,15 @@ $(function () {
      */
     var ChatRoom = function ($widget) {
         this.roomId = $widget.data('chatroomId');
-        this.topic = "/topic/chat/" + this.roomId;
-        this.$form = $('<form>');
+        this.topic = "/topic/stduser/chat/" + this.roomId;
         this.$view = $('<textarea data-viewer name="viewer" cols="30" rows="10" readonly=""></textarea>');
         this.$input = $('<input data-input type="text" name="message"/>');
-        this.$buton = $('<button data-button>送信</button>');
-        this.$form
+        this.$button = $('<button data-button>送信</button>');
+        $widget
             .append(this.$view)
             .append(this.$input)
-            .append(this.$buton);
-        $widget.append(this.$form);
-        this.$form.on('submit', this.send.bind(this));
+            .append(this.$button);
+        this.$button.on('click', this.send.bind(this));
     };
     ChatRoom.prototype = {
         /**
@@ -44,16 +63,16 @@ $(function () {
         },
         send: function () {
             this.connection.client.send(
-                "/app/chat/" + this.roomId,
-                {},
-                JSON.stringify({name: this.$input.val()})
+                "/app/stduser/chat/" + this.roomId,
+                csrfHeader,
+                JSON.stringify({content: this.$input.val()})
             );
             this.$input.val('');
             return false;
         },
         receive: function (msg) {
             var message = JSON.parse(msg.body);
-            this.$view.val(this.$view.val() + "\r\n" + message.name);
+            this.$view.val(this.$view.val() + "\r\n" + message.content);
         }
     };
 
@@ -67,19 +86,34 @@ $(function () {
     var StompConnection = function () {
         this.client = null;
         /**
+         * コネクションはconnectメソッドに対して非同期で張られるので、
+         * 直後にはsubscribe出来ない。
+         * コネクションが確立するまえにsubscribeしようとしたwidgetをストックして、
+         * コネクトコールバックの中でsubscribeする仕組みにしている。
+         * 以下は、コネクション確立までウィジェットを格納しておくための配列。
          * @type {Array.<_StompClient>}
          */
         this.preConnect = []
     };
     StompConnection.prototype = {
+        /**
+         * 指定したサーバのwebsocketエンドポイントに接続します。
+         * @param {string} endPoint
+         */
         connect: function (endPoint) {
             var socket = new SockJS(endPoint);
             this.client = Stomp.over(socket);
-            this.client.connect({}, this._onConnect.bind(this));
+            this.client.connect(csrfHeader, this._onConnect.bind(this));
         },
+
+        /**
+         * サーバとのwebsocketコネクションを切断します。
+         */
         disconnect: function () {
         },
+
         /**
+         * このコネクションに指定のクライアントオブジェクトを登録します（subscribe出来るようにする）。
          * @param {_StompClient} stompClient
          */
         register: function (stompClient) {
@@ -90,9 +124,19 @@ $(function () {
                 this.preConnect.push(stompClient);
             }
         },
+
+        /**
+         * このコネクションから指定のクライアントオブジェクトを切り離します。
+         * @param {_StompClient} stompClient
+         */
         unregister: function (stompClient) {
             this.client.disconnect(stompClient.connectionId);
         },
+
+        /**
+         * コネクション完了時に、保留にしていたオブジェクトをsubscribeさせます。
+         * @private
+         */
         _onConnect: function () {
             this.preConnect.forEach(function (stompClient) {
                 this.register(stompClient);
@@ -101,7 +145,7 @@ $(function () {
     };
 
     var stompConnection = new StompConnection();
-    stompConnection.connect('/hello');
+    stompConnection.connect(endpoint);
     rooms.forEach(function (room) {
         room.connect(stompConnection);
     });

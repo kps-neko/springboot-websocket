@@ -37,7 +37,7 @@ ext {
             // スキーマ名の設定
             schema           : "public",
             // 自動生成ファイルの出力パッケージのベース。
-            basePackage      : "sample",
+            basePackage      : "app",
             // DBのスキーマ名でサブパッケージを切るかどうか。
             enableSubPackages: "false",
             // mapperのタイプはANNOTATEDMAPPER,XMLMAPPER,MIXEDMAPPERから選択

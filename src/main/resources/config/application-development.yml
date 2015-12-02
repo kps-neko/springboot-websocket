@@ -1,3 +1,4 @@
+
 spring:
   # 開発環境用の設定ファイル
   profiles: development
@@ -17,9 +18,9 @@ spring:
     cache: false
     encoding: UTF-8
   mail:
-    host: smtxa.gemini.oneoffice.jp
-    username: s-wada@keyportsolutions.com
-    password: HigeBaka01
+    host: xxxxxxxxxxxxxxxxxxxxxxx
+    username: xxxxxxxxxxxxxxxxxxxxxxx
+    password: xxxxxxxxxxxxxxxxxxx
     protocol: smtp
 logging:
     file: app.log

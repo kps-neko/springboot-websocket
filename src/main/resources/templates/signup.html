@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!--<link th:href="@{/resources/css/base.css}" rel="stylesheet" type="text/css" /> -->
+    <title>Login</title>
+</head>
+<body>
+ほげほげ
+<form th:action="@{/signup}" th:object="${signupForm}" method="post">
+    <table>
+        <tr>
+            <td>ユーザID</td>
+            <td><input type="text" th:field="*{userId}"  th:errorclass="fieldError"/></td>
+            <td th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}" style="color: red">zzz</td>
+        </tr>
+        <tr>
+            <th>E-Mail</th>
+            <td><input type="text" th:field="*{email}"  th:errorclass="fieldError"/></td>
+            <td th:if="${#fields.hasErrors('email')}" th:errors="*{email}" style="color: red">zzz</td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: right;">
+                <input type="submit" value="sign up"/>
+            </td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

@@ -1,5 +1,7 @@
-<div layout:decorator="layoutold"
-     xmlns:layout="http://www.w3.org/1999/xhtml">
+<!--/* レイアウトの指定はこんな風にファイル指定する。 */-->
+<div layout:decorator="layout/layout"
+     xmlns:layout="http://www.w3.org/1999/xhtml"
+     xmlns:th      = "http://www.thymeleaf.org">
     <th:block layout:fragment="layout-content">
         <div onload="disconnect()">
             <noscript><h2 style="color: #ff0000">Seems your browser doesn't support Javascript! Websocket relies on

@@ -1,3 +1,10 @@
+#SSL設定。keystoreはプロジェクトルートに置く。
+server:
+  port: 8443
+  ssl:
+    key-store: server.jks
+    key-store-password: storepass
+    key-password: keypass
 spring:
   profiles:
     active: development

@@ -1,0 +1,106 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!--　<link th:href="@{/resources/css/base.css}" rel="stylesheet" type="text/css" /> -->
+</head>
+<body>
+    <form action="#" th:action="@{/bulletinBoard/add}" th:object="${bulletinBoardForm}" method="post">
+        <table>
+            <tr>
+                <td>お名前</td>
+                <td><input type="text" th:field="*{name}"  th:errorclass="fieldError"/></td>
+                <td th:if="${#fields.hasErrors('name')}" th:errors="*{name}" style="color: red"></td>
+            </tr>
+            <tr>
+                <td valign='top'>投稿</td>
+                <td><textarea rows="10" cols="50" th:field="*{postingContent}"  th:errorclass="fieldError"></textarea></td>
+                <td th:if="${#fields.hasErrors('postingContent')}" th:errors="*{postingContent}" style="color: red"></td>
+            </tr>
+            <tr>
+                <td align='right' colspan='2'><input type='submit' value='投稿' /></td>
+            </tr>
+        </table>
+    </form>
+
+    <!-- 管理者ユーザーの場合のみ表示 -->
+    <div sec:authorize="hasRole('ROLE_ADMIN')">
+        <HR/>
+        <p>書き込み内容の検索機能</p>
+        <p>指定した名前のユーザーのみ表示させる</p>
+        <form action="#" th:action="@{/bulletinBoard/serch}" th:object="${bulletinBoardForm}" method="post">
+            <table>
+                <tr>
+                    <td>お名前</td>
+                    <td><input type="text" th:field="*{name}" /></td>
+                </tr>
+                <tr>
+                    <td align='right' colspan='2'><input type='submit' value='検索' /></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+
+    <HR/>
+
+    <table width="80%">
+        <tr>
+            <td><span th:text="${pageCondition.totalCount}"></span>件</td>
+            <td><span th:text="${pageCondition.startingPosition + 1}"></span>件～<span th:text="${pageCondition.endPosition}"></span>件を表示</td>
+            <td>
+                <div th:switch="${pageCondition.page}">
+                    <span th:case="${1}" ><span>&lt;&nbsp;</span></span>
+                    <span th:case="*"><a th:href="@{${pageCondition.pageURL}(page=${pageCondition.page - 1})}"><span>&lt;&nbsp;</span></a></span>
+                </div>
+            </td>
+            <td>
+                <div th:switch="${pageCondition.page}">
+                      <span th:case="${pageCondition.totalPage}" ><span>&nbsp;&gt;</span></span>
+                      <span th:case="*"><a th:href="@{${pageCondition.pageURL}(page=${pageCondition.page + 1})}"><span>&nbsp;&gt;</span></a></span>
+                </div>
+            </td>
+        </tr>
+    </table>
+    <table border="1" width="80%">
+        <tr>
+              <td>お名前</td>
+              <td>投稿日時</td>
+              <td>投稿内容</td>
+        </tr>
+        <tr th:each="list : ${bulletinBoardDataList}">
+            <td width="15%"><span th:text="${list.name}"></span></td>
+            <td width="25%"><span th:text="${list.postingDate}"></span></td>
+            <td width="40%"><span th:text="${list.postingContent}"></span></td>
+        </tr>
+    </table>
+
+    <ul>
+        <li class="first">
+            <div th:switch="${pageCondition.page}">
+                <span th:case="${1}" ><span>&lt;&lt;&nbsp;最初へ</span></span>
+                <span th:case="*"><a th:href="@{${pageCondition.pageURL}(page=1)}"><span>&lt;&lt;&nbsp;最初へ</span></a></span>
+            </div>
+        </li>
+        <li th:each="i : ${pageCondition.pageNumberList}">
+            <div th:switch="${i}">
+                <span th:case="${pageCondition.page}" th:text="${i}"></span>
+                <span th:case="*">
+                    <a th:href="${bulletinBoardForm.serchKeyword == null}? @{${pageCondition.pageURL}(page=${i})} : @{${pageCondition.pageURL}(page=${i}, serchKeyword=${bulletinBoardForm.serchKeyword})}"><span th:text="${i}"></span></a>
+                    <!-- <a th:href="@{${pageCondition.pageURL}(page=${i})}"><span th:text="${i}"></span></a> -->
+                </span>
+            </div>
+        </li>
+        <li class="end">
+            <div th:switch="${pageCondition.page}">
+                <span th:case="${pageCondition.totalPage}" ><span>最後へ&nbsp;&gt;&gt;</span></span>
+                <span th:case="*">
+                    <a th:href="${bulletinBoardForm.serchKeyword == null}? @{${pageCondition.pageURL}(page=${pageCondition.totalPage})} : @{${pageCondition.pageURL}(page=${pageCondition.totalPage}, serchKeyword=${bulletinBoardForm.serchKeyword})}"><span>最後へ&nbsp;&gt;&gt;</span></a>
+                    <!-- <a th:href="@{${pageCondition.pageURL}(page=${pageCondition.totalPage})}"><span>最後へ&nbsp;&gt;&gt;</span></a> -->
+                </span>
+            </div>
+        </li>
+    </ul>
+</body>
+</html>

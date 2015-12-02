@@ -55,7 +55,7 @@ flyway {
 }
 
 assets {
-    minifyJs = true
+    minifyJs = false
     minifyCss = true
     enableSourceMaps = true
     configOptions = [:]
@@ -102,28 +102,30 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-web"
     compile "org.springframework.boot:spring-boot-starter-websocket"
     compile "org.springframework.boot:spring-boot-starter-test"
-//    compile "org.springframework.boot:spring-boot-starter-security"
+    compile "org.springframework.boot:spring-boot-starter-security"
     compile "org.springframework.boot:spring-boot-starter-thymeleaf"
-//    compile "org.springframework.boot:spring-boot-starter-data-jpa"
-//    compile "org.springframework.boot:spring-boot-starter-jdbc"
-//    compile "org.springframework.boot:spring-boot-starter-mail"
+    compile "org.springframework.boot:spring-boot-starter-data-jpa"
+    compile "org.springframework.boot:spring-boot-starter-jdbc"
+    compile "org.springframework.boot:spring-boot-starter-mail"
     compile 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
-//    compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4'
+    compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4'
     compile useLogger
+    // SpringSecurityをWebSocketで使用するのに必要。
+    compile "org.springframework.security:spring-security-messaging"
     //Asset Pipeline Dependencies
     compile("com.bertramlabs.plugins:asset-pipeline-spring-boot:2.6.7")
 
     // JDBC Driver
-//    try {
-//        jdbcResolve "${dbSetting.driverArtifactId}"
-//        configurations.jdbcResolve.getResolvedConfiguration().getResolvedArtifacts()
-//        compile "${dbSetting.driverArtifactId}"
-//        logger.warn("JDBC driver dependency is resolved by BOM")
-//    } catch (e) {
-//        // BOMで解決出来なかった場合はバージョン指定を行う。
-//        compile "${dbSetting.driverArtifactId}:${dbSetting.driverVersion}"
-//        logger.warn("JDBC driver dependency is resolved by setting")
-//    }
+    try {
+        jdbcResolve "${dbSetting.driverArtifactId}"
+        configurations.jdbcResolve.getResolvedConfiguration().getResolvedArtifacts()
+        compile "${dbSetting.driverArtifactId}"
+        logger.warn("JDBC driver dependency is resolved by BOM")
+    } catch (e) {
+        // BOMで解決出来なかった場合はバージョン指定を行う。
+        compile "${dbSetting.driverArtifactId}:${dbSetting.driverVersion}"
+        logger.warn("JDBC driver dependency is resolved by setting")
+    }
 
     // log4j2でyml設定ファイルを使いたい場合は必要。
     if (useLogger == loggers.log4j2) {
@@ -149,6 +151,7 @@ task genMyBatis << {
     dbSetting.each { key, val ->
         ant.properties["conf.$key"] = val
     }
+    ant.properties["conf.projectDir"] = projectDir.absolutePath
     ant.taskdef(
             name: 'genfiles',
             classname: 'org.mybatis.generator.ant.GeneratorAntTask',

@@ -1,8 +1,15 @@
 /**
  * Created by s-wada on 2015/11/27.
  */
-
 var stompClient = null;
+
+var csrfHeader = (function () {
+    var csrfHeader = $('meta[name=_csrf_header]').attr('content');
+    var csrfToken = $('meta[name=_csrf]').attr('content');
+    var header = {};
+    header[csrfHeader] = csrfToken;
+    return header;
+}());
 
 function setConnected(connected) {
     document.getElementById('connect').disabled = connected;
@@ -12,14 +19,17 @@ function setConnected(connected) {
 }
 
 function connect() {
-    var socket = new SockJS('/hello');
+    var socket = new SockJS('/wsendpoint');
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function(frame) {
+    stompClient.connect(csrfHeader, function () {
         setConnected(true);
-        console.log('Connected: ' + frame);
-        stompClient.subscribe('/user/queue/greetings', function(greeting){
+        console.log('Connected: ');
+        stompClient.subscribe('/user/queue/stduser/hello', function (greeting) {
+            console.log('receive message: ' + greeting);
             showGreeting(JSON.parse(greeting.body).content);
-        });
+        })
+    }, function (error) {
+        alert(error);
     });
 }
 
@@ -32,8 +42,8 @@ function disconnect() {
 }
 
 function sendName() {
-    var name = document.getElementById('name').value;
-    stompClient.send("/app/hello", {}, JSON.stringify({ 'name': name }));
+    var content = document.getElementById('name').value;
+    stompClient.send("/app/stduser/hello", csrfHeader, JSON.stringify({'content': content}));
 }
 
 function showGreeting(message) {

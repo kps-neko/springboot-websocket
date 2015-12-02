@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <title>入力画面</title>
+    </head>
+    <body>
+        <form th:action="@{/logout}" method="post">
+            <input type="submit" value="ログアウト" />
+        </form>
+        <form method="get" th:action="@{/bulletinBoard/serch/list}">
+                             名前：<input type="text" name="name"/>
+            <input type="submit" value="ok"/>
+        </form>
+        <form method="post" th:action="@{/bulletinBoard/serch/list}">
+                             名前：<input type="text" name="name"/>
+            <input type="submit" value="ok"/>
+        </form>
+    </body>
+</html>

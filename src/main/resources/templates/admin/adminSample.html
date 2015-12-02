@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>管理者</title>
+    <!--　<link th:href="@{/resources/css/base.css}" rel="stylesheet" type="text/css" /> -->
+</head>
+<body>
+    <p>このページは管理者用です。</p>
+    <a th:href="@{/}">トップページ</a>
+    <a th:href="@{/bulletinBoard/serch/page(page=1)}">掲示板</a>
+    <br />
+    <table border="1">
+        <tr>
+            <th>ユーザー名</th>
+            <td sec:authentication="name"></td>
+        </tr>
+        <tr>
+            <th>権限</th>
+            <td sec:authentication="principal.authorities"></td>
+        </tr>
+        <tr>
+            <th>組織名</th>
+            <td sec:authentication="principal.orgName"></td>
+        </tr>
+    </table>
+</body>
+</html>

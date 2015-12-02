@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <!--　<link th:href="@{/resources/css/base.css}" rel="stylesheet" type="text/css" /> -->
+    <title>トップページ</title>
+</head>
+<body>
+<div>
+    <a th:href="@{/websocket/}">websocketチャット</a><br/>
+</div>
+<div>
+    <a th:href="@{/websocket/sample}">公式サンプルコードのやつ</a><br/>
+</div>
+<div>
+    <a th:href="@{/user/sample}">一般ユーザー用</a><br/>
+</div>
+
+    <!-- 管理者ユーザーの場合のみ表示 -->
+    <div sec:authorize="hasRole('ROLE_ADMIN')">
+        <a th:href="@{/admin/sample}">管理者用</a>
+    </div>
+
+    <!-- ログインしていない場合ログイン画面へのリンクを表示 -->
+    <div th:if="${#httpServletRequest.remoteUser == null}">
+        <a th:href="@{/login}">ログイン</a>
+    </div>
+    <br/>
+    <fieldset th:if="${#httpServletRequest.remoteUser != null}">
+        <legend>ログイン情報</legend>
+        <form th:action="@{/logout}" method="post">
+            <span sec:authentication="name"></span>:<span sec:authentication="principal.authorities"></span>
+            <div style="text-align: right">
+                <input type="submit" value="ログアウト" />
+            </div>
+        </form>
+    </fieldset>
+</body>
+</html>

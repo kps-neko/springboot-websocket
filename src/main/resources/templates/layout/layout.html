@@ -5,12 +5,20 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8" />
+    <meta th:if="${_csrf != null and _csrf.token != null}" name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:if="${_csrf != null and _csrf.headerName != null}" name="_csrf_header" th:content="${_csrf.headerName}"/>
     <title>Title</title>
     <link rel="stylesheet" href="/assets/base.css" />
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="/assets/html5shiv.js"></script>
+    <script type="text/javascript" src="/assets/IE9.js"></script>
+    <script type="text/javascript" src="/assets/ie8fix.js"></script>
+    <![endif]-->
     <script src="/assets/sockjs-0.3.4.js"></script>
     <script src="/assets/stomp.js"></script>
     <script src="/assets/jquery-1.11.3.js"></script>
     <script src="/assets/main.js"></script>
+    <script src="/assets/chatroom.js"></script>
 </head>
 <body>
 <header>ヘッダですヘッダですヘッダですヘッダですヘッダですヘッダです。</header>

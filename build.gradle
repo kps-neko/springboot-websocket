@@ -115,6 +115,8 @@ dependencies {
     //Asset Pipeline Dependencies
     compile("com.bertramlabs.plugins:asset-pipeline-spring-boot:2.6.7")
 
+    compile("net.sourceforge.nekohtml:nekohtml")
+
     // JDBC Driver
     try {
         jdbcResolve "${dbSetting.driverArtifactId}"

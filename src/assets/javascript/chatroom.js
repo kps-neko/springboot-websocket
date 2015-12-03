@@ -7,13 +7,13 @@ $(function () {
     /**
      * ヘッダのメタタグからcsrfトークンを取得
      */
-    var csrfHeader = (function () {
-        var csrfHeader = $('meta[name=_csrf_header]').attr('content');
-        var csrfToken = $('meta[name=_csrf]').attr('content');
+    var csrfHeader = function () {
         var header = {};
-        header[csrfHeader] = csrfToken;
+        header[csrfHeader.csrfHeader] = csrfHeader.csrfToken;
         return header;
-    }());
+    };
+    csrfHeader.csrfHeader = $('meta[name=_csrf_header]').attr('content');
+    csrfHeader.csrfToken = $('meta[name=_csrf]').attr('content');
 
     /**
      * WebSocketエンドポイント
@@ -64,7 +64,7 @@ $(function () {
         send: function () {
             this.connection.client.send(
                 "/app/stduser/chat/" + this.roomId,
-                csrfHeader,
+                csrfHeader(),
                 JSON.stringify({content: this.$input.val()})
             );
             this.$input.val('');
@@ -73,6 +73,24 @@ $(function () {
         receive: function (msg) {
             var message = JSON.parse(msg.body);
             this.$view.val(this.$view.val() + "\r\n" + message.content);
+        }
+    };
+
+    var ExceptionListner = function(){
+        this.connection = null;
+        this.topic = "/user/queue/error";
+    };
+    ExceptionListner.prototype = {
+        /**
+         * @param {StompConnection} con
+         */
+        connect: function (con) {
+            con.register(this);
+            this.connection = con;
+        },
+        receive: function (msg) {
+            var message = JSON.parse(msg.body);
+            console.log(message);
         }
     };
 
@@ -103,7 +121,7 @@ $(function () {
         connect: function (endPoint) {
             var socket = new SockJS(endPoint);
             this.client = Stomp.over(socket);
-            this.client.connect(csrfHeader, this._onConnect.bind(this));
+            this.client.connect(csrfHeader(), this._onConnect.bind(this));
         },
 
         /**
@@ -119,7 +137,7 @@ $(function () {
         register: function (stompClient) {
             if (this.client.connected) {
                 stompClient.connectionId
-                    = this.client.subscribe(stompClient.topic, stompClient.receive.bind(stompClient));
+                    = this.client.subscribe(stompClient.topic, stompClient.receive.bind(stompClient), csrfHeader());
             } else {
                 this.preConnect.push(stompClient);
             }
@@ -149,4 +167,6 @@ $(function () {
     rooms.forEach(function (room) {
         room.connect(stompConnection);
     });
+    var listner = new ExceptionListner();
+    listner.connect(stompConnection);
 });

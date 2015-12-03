@@ -4,6 +4,15 @@
     <th:block layout:fragment="layout-content">
         <main>
             <section>
+                <article>
+                    <ul>
+                        <li>このページはあえてページそのものにアクセス制限を仕掛けていない。</li>
+                        <li>ユーザロールをもっていないとチャットに書き込めないし読み込めない。</li>
+                        <li>"throw"と入力するとサーバで例外が出る。（クライアントに伝搬し、jsコンソール出力）</li>
+                    </ul>
+                </article>
+            </section>
+            <section>
                 <article data-chatroom-id="1" id="room1"></article>
                 <article data-chatroom-id="2" id="room2"></article>
             </section>

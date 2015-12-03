@@ -3,13 +3,15 @@
  */
 var stompClient = null;
 
-var csrfHeader = (function () {
-    var csrfHeader = $('meta[name=_csrf_header]').attr('content');
-    var csrfToken = $('meta[name=_csrf]').attr('content');
+
+var csrfHeader = function () {
     var header = {};
-    header[csrfHeader] = csrfToken;
+    header[csrfHeader.csrfHeader] = csrfHeader.csrfToken;
     return header;
-}());
+};
+csrfHeader.csrfHeader = $('meta[name=_csrf_header]').attr('content');
+csrfHeader.csrfToken = $('meta[name=_csrf]').attr('content');
+
 
 function setConnected(connected) {
     document.getElementById('connect').disabled = connected;
@@ -21,13 +23,13 @@ function setConnected(connected) {
 function connect() {
     var socket = new SockJS('/wsendpoint');
     stompClient = Stomp.over(socket);
-    stompClient.connect(csrfHeader, function () {
+    stompClient.connect(csrfHeader(), function () {
         setConnected(true);
         console.log('Connected: ');
         stompClient.subscribe('/user/queue/stduser/hello', function (greeting) {
             console.log('receive message: ' + greeting);
             showGreeting(JSON.parse(greeting.body).content);
-        })
+        }, csrfHeader())
     }, function (error) {
         alert(error);
     });
@@ -43,7 +45,7 @@ function disconnect() {
 
 function sendName() {
     var content = document.getElementById('name').value;
-    stompClient.send("/app/stduser/hello", csrfHeader, JSON.stringify({'content': content}));
+    stompClient.send("/app/stduser/hello", csrfHeader(), JSON.stringify({'content': content}));
 }
 
 function showGreeting(message) {

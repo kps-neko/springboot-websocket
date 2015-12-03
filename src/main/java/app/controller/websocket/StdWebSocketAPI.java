@@ -1,7 +1,11 @@
 package app.controller.websocket;
 
+import app.exception.BusinessErrorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
@@ -13,13 +17,14 @@ import org.springframework.stereotype.Controller;
  * 一般ユーザ向けのWebSocketAPI
  */
 @Controller
+// 通常のSpringMVCとの違いとして、websocketでは @RequestMapping -> @MessageMapping とする。
 @MessageMapping("/stduser")
 public class StdWebSocketAPI {
+    private static final Logger log = LoggerFactory.getLogger(StdWebSocketAPI.class);
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-    // 通常のSpringMVCとの違いとして、websocketでは @RequestMapping -> @MessageMapping とする。
     @MessageMapping("/hello")
     @SendToUser // 送信者に対する配信。
 //    @SendTo // こちらにした場合は全配信。
@@ -29,9 +34,12 @@ public class StdWebSocketAPI {
     }
 
     @SubscribeMapping("/chat/{id:[1-5]}")
-    public void chatroom(@DestinationVariable String id, ShortMessage message) {
+    public void chatroom(@DestinationVariable String id, ShortMessage message) throws Exception{
         System.out.println("/chat/" + id);
         System.out.println(message.getContent());
+        if (message.getContent().equals("throw")) {
+            throw  new BusinessErrorException("エラーですよ！！！");
+        }
         simpMessagingTemplate.convertAndSend("/topic/stduser/chat/" + id, message);
     }
 

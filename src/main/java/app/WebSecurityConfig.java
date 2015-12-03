@@ -37,7 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/signup", "/websocket/**", "/assets/**").permitAll() // 認証なしでアクセスできるパスの指定
                 .antMatchers("/admin/**").hasRole("ADMIN")     // adminの場合ロールがADMINの場合のみ許可する
                 // その他のリクエストは認証が必要
-                .anyRequest().authenticated()
+                .anyRequest().hasRole("USER")
                 .and()
                 .formLogin()
                 // ログインフォームのパス
@@ -55,37 +55,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .sessionManagement().invalidSessionUrl("/");  // 無効なセッションIDが指定された場合の遷移先を指定
     }
-
-//    /**
-//     * ユーザー情報を設定
-//     * @param auth
-//     * @throws Exception
-//     */
-//    @Autowired
-//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        // DB使う場合
-//        auth
-//            .jdbcAuthentication()
-//                .dataSource(dataSource)
-//                .authoritiesByUsernameQuery("select user_id as username, role as authority from user_roles where user_id = ?")
-//                .usersByUsernameQuery("select user_id as username, password, enabled from user_info where user_id = ?")
-//        ;
-//
-////        auth
-////            .jdbcAuthentication()
-////                .dataSource(dataSource)
-////                .withDefaultSchema()
-////                .withUser("user").password("user").roles("USER").and()
-////                .withUser("admin").password("admin").roles("ADMIN");
-//
-//        // DB使わない場合
-////        auth
-////            .inMemoryAuthentication()
-////                .withUser("user").password("user").roles("USER")
-////                .and()
-////                .withUser("admin").password("admin").roles("ADMIN")
-////                ;
-//    }
 
     /**
      * 独自処理の呼び出し

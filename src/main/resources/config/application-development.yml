@@ -17,6 +17,8 @@ spring:
   thymeleaf:
     cache: false
     encoding: UTF-8
+    # テンプレートに閉じタグが無くてもOKにする。
+    mode: LEGACYHTML5
   mail:
     host: xxxxxxxxxxxxxxxxxxxxxxx
     username: xxxxxxxxxxxxxxxxxxxxxxx

@@ -72,7 +72,11 @@ $(function () {
         },
         receive: function (msg) {
             var message = JSON.parse(msg.body);
-            this.$view.val(this.$view.val() + "\r\n" + message.content);
+            if (message.success) {
+                this.$view.val(this.$view.val() + "\r\n" + message.body.content);
+            } else {
+                alert(message.body.content);
+            }
         }
     };
 
@@ -90,7 +94,7 @@ $(function () {
         },
         receive: function (msg) {
             var message = JSON.parse(msg.body);
-            console.log(message);
+            console.error(message);
         }
     };
 

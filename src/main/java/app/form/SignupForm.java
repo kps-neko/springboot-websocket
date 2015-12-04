@@ -13,6 +13,8 @@ import java.io.Serializable;
  */
 
 public class SignupForm implements Serializable {
+
+
     @Length(max = 255)
     @NotNull
     @NotBlank
